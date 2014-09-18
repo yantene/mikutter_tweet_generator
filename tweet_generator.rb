@@ -27,9 +27,13 @@ Plugin.create :tweet_generator do
 
     # 指定した文字数以下の適当な文字列を返します
     def generate(str_len = 140)
-      100.times do
-        str = gen_tweet
-        return str if str.size <= str_len
+      if @knowledge.empty?
+        activity :hour_signal, "学習データが存在しません"
+      else
+        100.times do
+          str = gen_tweet
+          return str if str.size <= str_len
+        end
       end
       return ''
     end
