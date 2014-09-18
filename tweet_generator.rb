@@ -4,6 +4,7 @@ Plugin.create :tweet_generator do
   require 'pstore'
   require 'mecab'
   require 'set'
+  require 'pp'
 
   class Generator
     def initialize(knowledge = {})
@@ -58,14 +59,16 @@ Plugin.create :tweet_generator do
   # メッセージをポストしたらデータを追加
   on_posted do |service, messages|
     messages.each do |message|
-      str = ''
-      # 適当にアット，ハッシュタグ，リンクを削除
-      message.to_show.split(/[ 　]/).each do |s|
-        str += s + ' ' unless s =~ /([@#＃]|http).*/
-      end
-      @generator.add_data(str)
-      DATA.transaction do |data|
-        data['knowledge'] = @generator.get_data
+      unless message.retweet?
+        str = ''
+        # 適当にアット，ハッシュタグ，リンクを削除
+        message.to_show.split(/[ 　]/).each do |s|
+          str += s + ' ' unless s =~ /([@#＃]|http).*/
+        end
+        @generator.add_data(str)
+        DATA.transaction do |data|
+          data['knowledge'] = @generator.get_data
+        end
       end
     end
   end
@@ -76,10 +79,10 @@ Plugin.create :tweet_generator do
             condition: lambda{ |opt| true },
             visible: false,
             role: :postbox) do |opt|
-    raw_postbox = Plugin.filtering(:gui_get_gtk_widget, opt.widget).first
-    buffer = raw_postbox.widget_post.buffer
-    text = @generator.generate(140 - buffer.get_text.size)
-    last = buffer.selection_bounds[1]
-    buffer.insert(last, text)
+      raw_postbox = Plugin.filtering(:gui_get_gtk_widget, opt.widget).first
+      buffer = raw_postbox.widget_post.buffer
+      text = @generator.generate(140 - buffer.get_text.size)
+      last = buffer.selection_bounds[1]
+      buffer.insert(last, text)
   end
 end
