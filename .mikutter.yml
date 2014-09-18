@@ -1,0 +1,9 @@
+---
+slug: :tweet_generator
+depends:
+  mikutter: 3.0.5
+  plugin: []
+version: '1.0'
+author: 
+name: tweet generator
+description: "何かpostしたいけれどpostする内容が思いつかない、なんてことありますよね。そんなとき、このプラグインを使えば適当にそれらしい文字列をpostすることができます。"
