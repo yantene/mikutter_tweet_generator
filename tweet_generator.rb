@@ -38,7 +38,7 @@ Plugin.create :tweet_generator do
       tweet = []
       hint =['START FLG', 'START FLG']
       begin
-        tweet << @knowledge[hint].to_a[Random.rand(@knowledge[hint].size)]
+        tweet << @knowledge[hint].to_a.sample
         hint[0] = hint[1]
         hint[1] = tweet[-1]
       end until tweet[-1] == 'STOP FLG'
