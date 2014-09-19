@@ -40,15 +40,11 @@ Plugin.create :tweet_generator do
 
     # 2次のマルコフ連鎖で文章を生成します
     def gen_tweet
-      tweet = []
-      hint =['START FLG', 'START FLG']
+      tweet = ['START FLG', 'START FLG']
       begin
-        tweet << @knowledge[hint].to_a.sample
-        hint[0] = hint[1]
-        hint[1] = tweet[-1]
+        tweet << @knowledge[tweet[-2, 2]].to_a.sample
       end until tweet[-1] == 'STOP FLG'
-      tweet.delete_at(-1)
-      tweet.join
+      tweet[2..-2].join
     end
   end
 
