@@ -7,11 +7,12 @@ Plugin.create :tweet_generator do
   require 'pp'
 
   class Generator
+    SRT = 'START FLG'
+    STP = 'STOP FLG'
+
     def initialize(knowledge = {})
       @knowledge = knowledge
       @m = MeCab::Tagger.new("-Owakati")
-      SRT = 'START FLG'
-      STP = 'STOP FLG'
     end
 
     # 受信したテキストについてそれを学習します
