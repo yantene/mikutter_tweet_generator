@@ -10,11 +10,13 @@ Plugin.create :tweet_generator do
     def initialize(knowledge = {})
       @knowledge = knowledge
       @m = MeCab::Tagger.new("-Owakati")
+      SRT = 'START FLG'
+      STP = 'STOP FLG'
     end
 
     # 受信したテキストについてそれを学習します
     def add_data(str)
-      ['START FLG','START FLG', *@m.parse(str).split(' '), 'STOP FLG'].each_cons(3) do |i, j, k|
+      [SRT,SRT, *@m.parse(str).split(' '), STP].each_cons(3) do |i, j, k|
         @knowledge[[i, j]] ||= Set.new
         @knowledge[[i, j]] << k
       end
@@ -40,10 +42,10 @@ Plugin.create :tweet_generator do
 
     # 2次のマルコフ連鎖で文章を生成します
     def gen_tweet
-      tweet = ['START FLG', 'START FLG']
+      tweet = [SRT, SRT]
       begin
         tweet << @knowledge[tweet[-2, 2]].to_a.sample
-      end until tweet[-1] == 'STOP FLG'
+      end until tweet[-1] == STP
       tweet[2..-2].join
     end
   end
